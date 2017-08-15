@@ -158,7 +158,9 @@ claim_args(_From, _To, #state{ring=Ring}) ->
 %% @doc claim - The actual operation
 claim(Ring) ->
     R =riak_core_claim:claim(Ring, {riak_core_claim, wants_claim_v2}, {riak_core_claim, choose_claim_v2}),
-    R.
+    %% @TODO remove all leaving, promote all joining to valid, transfer all indexes
+    {_, R2} = riak_core_claimant:maybe_handle_joining(?CLAIMANT, R),
+    R2.
 
 %% @doc claim_next - Next state function
 -spec claim_next(_From, _To, S, Var, Args) -> NewS

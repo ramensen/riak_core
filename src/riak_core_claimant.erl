@@ -44,6 +44,10 @@
          bucket_type_iterator/0]).
 -export([reassign_indices/1]). % helpers for claim sim
 
+-ifdef(TEST).
+-export([maybe_handle_joining/2]).
+-endif.
+
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          terminate/2, code_change/3]).
