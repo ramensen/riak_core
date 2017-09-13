@@ -50,9 +50,13 @@ create_plan(VNodeSelector, NVal, PVC, ReqId, Service) ->
     %% Create a coverage plan with the requested primary
     %% preference list VNode coverage.
     %% Get a list of the VNodes owned by any unavailble nodes
+    {NonCoverageNodesResult, _} = riak_core_util:rpc_every_member_ann(app_helper,get_env,
+                                                         [riak_kv,participate_in_2i_coverage],1),
+    NonCoverageNodes = [Node || {Node, false} <- NonCoverageNodesResult ],
     DownVNodes = [Index ||
                      {Index, _Node}
-                         <- riak_core_apl:offline_owners(Service, CHBin)],
+                         <- riak_core_apl:offline_owners(Service, CHBin, NonCoverageNodes)],
+
     %% Calculate an offset based on the request id to offer
     %% the possibility of different sets of VNodes being
     %% used even when all nodes are available.
