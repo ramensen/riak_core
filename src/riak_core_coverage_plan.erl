@@ -51,7 +51,7 @@ create_plan(VNodeSelector, NVal, PVC, ReqId, Service) ->
     %% preference list VNode coverage.
     %% Get a list of the VNodes owned by any unavailble nodes
     {NonCoverageNodesResult, _} = riak_core_util:rpc_every_member_ann(app_helper,get_env,
-                                                         [riak_kv,participate_in_2i_coverage],1),
+                                                         [riak_core,participate_in_coverage],1),
     NonCoverageNodes = [Node || {Node, false} <- NonCoverageNodesResult ],
     DownVNodes = [Index ||
                      {Index, _Node}
