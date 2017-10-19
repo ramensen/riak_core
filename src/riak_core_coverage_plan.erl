@@ -47,11 +47,16 @@
 create_plan(VNodeSelector, NVal, PVC, ReqId, Service) ->
     {ok, CHBin} = riak_core_ring_manager:get_chash_bin(),
     PartitionCount = chashbin:num_partitions(CHBin),
+    {ok, Ring} = riak_core_ring_manager:get_my_ring(),
     %% Create a coverage plan with the requested primary
     %% preference list VNode coverage.
     %% Get a list of the VNodes owned by any unavailble nodes
-    {NonCoverageNodesResult, _} = riak_core_util:rpc_every_member_ann(app_helper,get_env,
-                                                         [riak_core,participate_in_coverage],1),
+    Members = riak_core_ring:all_members(Ring),
+    NonCoverageNodesResult = [{Node,
+                               riak_core_ring:get_member_meta(Ring, Node, participate_in_coverage)}
+                               || Node <- Members ],
+    %% {NonCoverageNodesResult, _} = riak_core_util:rpc_every_member_ann(app_helper,get_env,
+    %%                                                     [riak_core,participate_in_coverage],1),
     NonCoverageNodes = [Node || {Node, false} <- NonCoverageNodesResult ],
     DownVNodes = [Index ||
                      {Index, _Node}
