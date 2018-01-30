@@ -509,7 +509,7 @@ run_fixups([{App, Fixup}|T], BucketName, BucketProps) ->
     run_fixups(T, BucketName, BP).
 
 %% Add node level configs to ring
-%% @spec node_level_config(riak_core_ring:riak_core_ring()) -> riak_core_ring:riak_core_ring()
+-spec node_level_config(riak_core_ring:riak_core_ring()) -> riak_core_ring:riak_core_ring().
 node_level_config(Ring) ->
     %% Check node participation in coverage queries and update ring
     Node = node(),
