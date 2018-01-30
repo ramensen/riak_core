@@ -52,12 +52,9 @@ create_plan(VNodeSelector, NVal, PVC, ReqId, Service) ->
     %% preference list VNode coverage.
     %% Get a list of the VNodes owned by any unavailble nodes
     Members = riak_core_ring:all_members(Ring),
-    NonCoverageNodesResult = [{Node,
-                               riak_core_ring:get_member_meta(Ring, Node, participate_in_coverage)}
-                               || Node <- Members ],
-    %% {NonCoverageNodesResult, _} = riak_core_util:rpc_every_member_ann(app_helper,get_env,
-    %%                                                     [riak_core,participate_in_coverage],1),
-    NonCoverageNodes = [Node || {Node, false} <- NonCoverageNodesResult ],
+    NonCoverageNodes = [Node || Node <- Members,
+                                      riak_core_ring:get_member_meta(Ring, Node, participate_in_coverage) == false],
+
     DownVNodes = [Index ||
                      {Index, _Node}
                          <- riak_core_apl:offline_owners(Service, CHBin, NonCoverageNodes)],
